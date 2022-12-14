@@ -36,7 +36,11 @@ func main() {
 			continue
 		}
 
-		var bookedUser = bookUser(firstName, lastName, userTickets, email, remainingTickets, bookings)
+		var bookedUser = produceUser(firstName, lastName, userTickets, email)
+		bookings = append(bookings, bookedUser)
+		remainingTickets = remainingTickets - bookedUser.UserTickets
+		helper.PrintConfirmation(bookedUser, remainingTickets, bookings)
+
 		// to run code in separate thread just use 'go'
 		// but without thread synchro when main thread will be finished before SendTicket, then ticket won't be sent. Thats why we define waitGroup
 		WaitGroup.Add(1) // means that untill counter becomes 0 then this thread - main thread ( go routine) caan't be finished and need to wait
@@ -45,22 +49,17 @@ func main() {
 	WaitGroup.Wait() // this waits when counter reaches 0 before releasing routine
 }
 
-func bookUser(firstName string, lastName string, userTickets uint, email string, remainingTickets uint, bookings []helper.User) helper.User {
-	remainingTickets = remainingTickets - userTickets
+func produceUser(firstName string, lastName string, userTickets uint, email string) helper.User {
 
 	//this is how we add element to array
 	//bookings[0] = firstName + " " + lastName
 	//this is howe we add eleement to slice ( comment from me but we create each time new slice in this way)
 	//bookings = append(bookings, firstName+" "+lastName)
 
-	var bookedUser = helper.User{
+	return helper.User{
 		FirstName:   firstName,
 		LastName:    lastName,
 		Email:       email,
 		UserTickets: userTickets,
 	}
-	bookings = append(bookings, bookedUser)
-
-	helper.PrintConfirmation(bookedUser, remainingTickets, bookings)
-	return bookedUser
 }
