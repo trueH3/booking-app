@@ -1,9 +1,20 @@
 package main
 
-//import "booking-app/helper"
-import "booking-app/restexample"
+import (
+	"booking-app/cli"
+	"booking-app/rest"
+	"fmt"
+)
 
 func main() {
-	//helper.RunCliApp()
-	restexample.RunExampleRestApp()
+	fmt.Println("Welcome to Booking App. Please choose app mode cli/rest. If other value will be chosen then rest will be launched")
+
+	var mode string
+
+	fmt.Scanln(&mode)
+
+	if mode == "cli" {
+		cli.RunCliApp()
+	}
+	rest.RunRestApp()
 }

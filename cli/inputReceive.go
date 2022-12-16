@@ -1,13 +1,13 @@
-package helper
+package cli
 
 import "fmt"
 
-func getUserInput() (string, string, string, uint) {
+func getUserInput() (string, string, string, uint32) {
 
 	var firstName string
 	var lastName string
 	var email string
-	var userTickets uint
+	var userTickets uint32
 
 	fmt.Println("Please provide number of tickets")
 	fmt.Scanln(&userTickets)
