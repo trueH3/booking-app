@@ -1,12 +1,11 @@
-package main
+package helper
 
 import (
-	"booking-app/helper"
 	"fmt"
 	"time"
 )
 
-func sendTicket(user helper.User) {
+func sendTicket(user User) {
 	time.Sleep(10 * time.Second)
 	var ticket = fmt.Sprintf("%v tickets for %v %v.", user.UserTickets, user.FirstName, user.LastName)
 	fmt.Println("#########")
@@ -14,5 +13,5 @@ func sendTicket(user helper.User) {
 	fmt.Println("#########")
 
 	// this decrements counter by 1 for workgroup
-	WaitGroup.Done()
+	waitGroup.Done()
 }

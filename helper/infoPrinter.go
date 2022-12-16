@@ -5,15 +5,15 @@ import "fmt"
 const conferenceName = "Go conference"
 
 // capital letter changes visibility to public for all packages
-const ConferenceTickets = 50
+const conferenceTickets = 50
 
-func GreetUsers(remainingTickets uint) {
+func greetUsers(remainingTickets uint) {
 	fmt.Println("Welcome to", conferenceName, "booking application.")
-	fmt.Println("We have total of", ConferenceTickets, "tickets and", remainingTickets, "are still available")
+	fmt.Println("We have total of", conferenceTickets, "tickets and", remainingTickets, "are still available")
 	fmt.Println("Get your tickets here for attend")
 }
 
-func PrintConfirmation(user User, remainingTickets uint, bookings []User) {
+func printConfirmation(user User, remainingTickets uint, bookings []User) {
 	fmt.Printf("User %v %v, booked %v tickets. Confirmation will be sent on %v\n", user.FirstName, user.LastName, user.UserTickets, user.Email)
 	fmt.Printf("%v tickets remiaining\n", remainingTickets)
 	printNamesOfAllAttendants(bookings, user)

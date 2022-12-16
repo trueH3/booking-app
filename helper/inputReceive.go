@@ -2,7 +2,7 @@ package helper
 
 import "fmt"
 
-func GetUserInput() (string, string, string, uint) {
+func getUserInput() (string, string, string, uint) {
 
 	var firstName string
 	var lastName string
