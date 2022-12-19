@@ -4,11 +4,12 @@ import (
 	"booking-app/helper"
 	"errors"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"net/http"
 	"sync/atomic"
 )
 
-var bookings = []helper.User{}
+//
 
 // this needs to be thread safe, do not use it directly
 var remainingTickets = helper.ConferenceTickets
@@ -30,31 +31,33 @@ func RunRestApp() {
 }
 
 func getAllBookings(context *gin.Context) {
-	context.IndentedJSON(http.StatusOK, bookings)
+	context.IndentedJSON(http.StatusOK, helper.GetAllBookings())
 }
 
 func getInfo(context *gin.Context) {
-	infoText := helper.GetGreetUsersAsString(getRemainingTickets()) + helper.GetNamesOfAllAttendantsAsString(bookings)
+	infoText := helper.GetGreetUsersAsString(getRemainingTickets()) + helper.GetNamesOfAllAttendantsAsString(helper.GetAllBookings())
 	context.String(http.StatusOK, infoText)
 }
 
 func addBooking(context *gin.Context) {
-	var newBooking helper.User
+	var bookingRequest helper.User
 
-	err := context.BindJSON(&newBooking)
+	err := context.BindJSON(&bookingRequest)
 	if err != nil {
 		return
 	}
 
-	if !helper.IsRequestValid(newBooking, getRemainingTickets()) {
-		err := errors.New("Please provide valid first name, last name, email, and be sure that we have enough tickets left").Error()
+	if !helper.IsRequestValid(bookingRequest, getRemainingTickets()) {
+		err := errors.New("please provide valid first name, last name, email, and be sure that we have enough tickets left").Error()
 		context.IndentedJSON(http.StatusBadRequest, gin.H{"message": err})
 		return
 	}
 
-	bookings = append(bookings, newBooking)
-	setRemainingTickets(getRemainingTickets() - newBooking.UserTickets)
-	context.IndentedJSON(http.StatusCreated, newBooking)
-	go helper.SendTicket(newBooking)
-	helper.PrintConfirmation(newBooking, getRemainingTickets(), bookings)
+	//bookings = append(bookings, bookingRequest)
+	bookingRequest.Id = uuid.NewString()
+	helper.SaveBooking(&bookingRequest)
+	setRemainingTickets(getRemainingTickets() - bookingRequest.UserTickets)
+	context.IndentedJSON(http.StatusCreated, bookingRequest)
+	go helper.SendTicket(bookingRequest)
+	helper.PrintConfirmation(bookingRequest, getRemainingTickets(), helper.GetAllBookings())
 }

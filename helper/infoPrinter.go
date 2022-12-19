@@ -17,11 +17,11 @@ func PrintGreetUsers(remainingTickets uint32) {
 	fmt.Println(GetGreetUsersAsString(remainingTickets))
 }
 
-func printNamesOfAllAttendants(bookings []User) {
+func printNamesOfAllAttendants(bookings []*User) {
 	fmt.Println(GetNamesOfAllAttendantsAsString(bookings))
 }
 
-func GetNamesOfAllAttendantsAsString(bookings []User) string {
+func GetNamesOfAllAttendantsAsString(bookings []*User) string {
 	// range means get index and value for given collection, _ means ignore returning index cause i do not use it anywhere
 	var firstNames = []string{}
 	for _, booking := range bookings {
@@ -30,7 +30,7 @@ func GetNamesOfAllAttendantsAsString(bookings []User) string {
 	return fmt.Sprintf(attendantsInfo, firstNames)
 }
 
-func PrintConfirmation(user User, remainingTickets uint32, bookings []User) {
+func PrintConfirmation(user User, remainingTickets uint32, bookings []*User) {
 	fmt.Printf("User %v %v, booked %v tickets. Confirmation will be sent on %v\n", user.FirstName, user.LastName, user.UserTickets, user.Email)
 	fmt.Printf("%v tickets remiaining\n", remainingTickets)
 	printNamesOfAllAttendants(bookings)

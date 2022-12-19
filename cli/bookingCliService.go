@@ -3,14 +3,11 @@ package cli
 import (
 	"booking-app/helper"
 	"fmt"
+	"github.com/google/uuid"
 )
 
 func RunCliApp() {
 	var remainingTickets uint32 = helper.ConferenceTickets
-	// this is array, defining array requires size , if we don't know the size then we can use slice , slice is an array with dynamic size
-	// var bookings = [conferenceTickets]string{}
-	// this is a slice
-	var bookings = []helper.User{}
 
 	helper.PrintGreetUsers(remainingTickets)
 
@@ -33,9 +30,9 @@ func RunCliApp() {
 		}
 
 		var bookedUser = produceUser(firstName, lastName, userTickets, email)
-		bookings = append(bookings, bookedUser)
+		helper.SaveBooking(&bookedUser)
 		remainingTickets = remainingTickets - bookedUser.UserTickets
-		helper.PrintConfirmation(bookedUser, remainingTickets, bookings)
+		helper.PrintConfirmation(bookedUser, remainingTickets, helper.GetAllBookings())
 
 		go helper.SendTicket(bookedUser)
 	}
@@ -49,6 +46,7 @@ func produceUser(firstName string, lastName string, userTickets uint32, email st
 	//bookings = append(bookings, firstName+" "+lastName)
 
 	return helper.User{
+		Id:          uuid.NewString(),
 		FirstName:   firstName,
 		LastName:    lastName,
 		Email:       email,
