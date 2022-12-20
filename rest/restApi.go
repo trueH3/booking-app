@@ -9,8 +9,6 @@ import (
 	"sync/atomic"
 )
 
-//
-
 // this needs to be thread safe, do not use it directly
 var remainingTickets = helper.ConferenceTickets
 
@@ -53,7 +51,6 @@ func addBooking(context *gin.Context) {
 		return
 	}
 
-	//bookings = append(bookings, bookingRequest)
 	bookingRequest.Id = uuid.NewString()
 	helper.SaveBooking(&bookingRequest)
 	setRemainingTickets(getRemainingTickets() - bookingRequest.UserTickets)
