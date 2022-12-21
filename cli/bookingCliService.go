@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 )
 
-var userRepository helper.UserRepositoryStruct
+var userRepository helper.IUserRepository = helper.UserRepositoryStruct{}
 
 func RunCliApp() {
 	var remainingTickets uint32 = helper.ConferenceTickets

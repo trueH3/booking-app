@@ -11,7 +11,7 @@ import (
 
 // this needs to be thread safe, do not use it directly
 var remainingTickets = helper.ConferenceTickets
-var userRepository helper.UserRepositoryStruct
+var userRepository helper.IUserRepository = helper.UserRepositoryStruct{}
 
 func getRemainingTickets() uint32 {
 	return atomic.LoadUint32(&remainingTickets)
