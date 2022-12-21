@@ -11,6 +11,7 @@ import (
 
 // this needs to be thread safe, do not use it directly
 var remainingTickets = helper.ConferenceTickets
+var userRepository helper.UserRepositoryStruct
 
 func getRemainingTickets() uint32 {
 	return atomic.LoadUint32(&remainingTickets)
@@ -29,11 +30,11 @@ func RunRestApp() {
 }
 
 func getAllBookings(context *gin.Context) {
-	context.IndentedJSON(http.StatusOK, helper.GetAllBookings())
+	context.IndentedJSON(http.StatusOK, userRepository.GetAllBookings())
 }
 
 func getInfo(context *gin.Context) {
-	infoText := helper.GetGreetUsersAsString(getRemainingTickets()) + helper.GetNamesOfAllAttendantsAsString(helper.GetAllBookings())
+	infoText := helper.GetGreetUsersAsString(getRemainingTickets()) + helper.GetNamesOfAllAttendantsAsString(userRepository.GetAllBookings())
 	context.String(http.StatusOK, infoText)
 }
 
@@ -52,9 +53,9 @@ func addBooking(context *gin.Context) {
 	}
 
 	bookingRequest.Id = uuid.NewString()
-	helper.SaveBooking(&bookingRequest)
+	userRepository.SaveBooking(&bookingRequest)
 	setRemainingTickets(getRemainingTickets() - bookingRequest.UserTickets)
 	context.IndentedJSON(http.StatusCreated, bookingRequest)
 	go helper.SendTicket(bookingRequest)
-	helper.PrintConfirmation(bookingRequest, getRemainingTickets(), helper.GetAllBookings())
+	helper.PrintConfirmation(bookingRequest, getRemainingTickets(), userRepository.GetAllBookings())
 }

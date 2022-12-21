@@ -1,6 +1,13 @@
 package helper
 
-func SaveBooking(user *User) {
+type IUserRepository interface {
+	SaveBooking(user *User)
+	GetAllBookings() []*User
+}
+
+type UserRepositoryStruct struct{}
+
+func (repository UserRepositoryStruct) SaveBooking(user *User) {
 	transaction := GetDatabase().Txn(true)
 	if err := transaction.Insert("user", user); err != nil {
 		panic(err)
@@ -8,7 +15,7 @@ func SaveBooking(user *User) {
 	transaction.Commit()
 }
 
-func GetAllBookings() []*User {
+func (repository UserRepositoryStruct) GetAllBookings() []*User {
 	transaction := GetDatabase().Txn(false)
 	usersAsResultIterator, err := transaction.Get("user", "id")
 	if err != nil {

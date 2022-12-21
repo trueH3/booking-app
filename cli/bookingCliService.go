@@ -6,6 +6,8 @@ import (
 	"github.com/google/uuid"
 )
 
+var userRepository helper.UserRepositoryStruct
+
 func RunCliApp() {
 	var remainingTickets uint32 = helper.ConferenceTickets
 
@@ -30,9 +32,9 @@ func RunCliApp() {
 		}
 
 		var bookedUser = produceUser(firstName, lastName, userTickets, email)
-		helper.SaveBooking(&bookedUser)
+		userRepository.SaveBooking(&bookedUser)
 		remainingTickets = remainingTickets - bookedUser.UserTickets
-		helper.PrintConfirmation(bookedUser, remainingTickets, helper.GetAllBookings())
+		helper.PrintConfirmation(bookedUser, remainingTickets, userRepository.GetAllBookings())
 
 		go helper.SendTicket(bookedUser)
 	}
