@@ -1,7 +1,7 @@
 package rest
 
 import (
-	"booking-app/helper"
+	"booking-app/pkg/helper"
 	"bytes"
 	"encoding/json"
 	"fmt"

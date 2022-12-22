@@ -1,7 +1,7 @@
 package helper_test
 
 import (
-	"booking-app/helper"
+	"booking-app/pkg/helper"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

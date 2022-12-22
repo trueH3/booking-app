@@ -1,9 +1,9 @@
 package main
 
 import (
-	"booking-app/cli"
-	"booking-app/helper"
-	"booking-app/rest"
+	"booking-app/pkg/cli"
+	"booking-app/pkg/helper"
+	"booking-app/pkg/rest"
 	"fmt"
 )
 

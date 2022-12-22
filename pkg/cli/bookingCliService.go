@@ -1,7 +1,7 @@
 package cli
 
 import (
-	"booking-app/helper"
+	"booking-app/pkg/helper"
 	"fmt"
 	"github.com/google/uuid"
 )
