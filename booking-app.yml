@@ -1,0 +1,103 @@
+openapi: 3.0.0
+
+info:
+  title: Booking app OAS
+  description: OpenApi specification for a booking-app
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080/
+
+components:
+  schemas:
+    Booking:
+      type: object
+      properties:
+        FirstName:
+          type: string
+          nullable: false
+          description: name of the person. Must be longer than 2
+        LastName:
+          type: string
+          nullable: false
+          description: last name of the person. Must be longer than 2
+        Email:
+          type: string
+          nullable: false
+          description: email of the person. Must contains '@'
+        UserTickets:
+          type: integer
+          format: int32
+          nullable: false
+          description: number of ordered tickets. Must be greater than 0
+      required:
+        - FirstName
+        - LastName
+        - Email
+        - UserTickets
+      example:
+        FirstName: Malcolm
+        LastName: Doe
+        Email: mal@yahoo.com
+        UserTickets: 3
+
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
+      example:
+        message: please provide valid first name, last name, email, and be sure that we have enough tickets left
+      
+paths:
+  /booking-app:
+    post:
+      description: Creates new booking 
+      operationId: createBooking
+      requestBody:
+        description: Booking to add
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Booking'
+      responses:
+        '201': 
+          description: successful booking
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        '400':
+          description: wrong request parameters provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    get:
+      description: Returns all Bookings
+      operationId: getBookings
+      responses:
+        '200':
+          description: get all bookings response 
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Booking'
+  /booking-app/info:
+    get:
+      description: booking info
+      operationId: get info
+      responses:
+        '200':
+          description: get booking info response
+          content:
+            text/plain:
+              schema:
+               type: string
+               example: 'Welcome to Go conference booking application. We have total of 50 tickets and 24 are still available. Get your tickets here for attend. People that are coming to our conference: [Szym Szym2]'

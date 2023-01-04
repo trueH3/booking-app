@@ -5,13 +5,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/stretchr/testify/assert"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-
-	"github.com/gin-gonic/gin"
-	"github.com/stretchr/testify/assert"
 )
 
 type mockUserRepositoryStruct struct{}
@@ -37,16 +35,10 @@ func (repository mockUserRepositoryStruct) GetAllBookings() []*helper.User {
 		}}
 }
 
-func initRouter() *gin.Engine {
-	gin.SetMode(gin.TestMode)
-	return gin.Default()
-}
-
 func TestGetAllBookings(t *testing.T) {
-	router := initRouter()
+	router := produceRouterWithHandlers()
 	requestUrl := "/booking-app"
 	userRepository = mockUserRepositoryStruct{}
-	router.GET(requestUrl, getAllBookings)
 	requestPointer, _ := http.NewRequest(http.MethodGet, requestUrl, nil)
 	responseRecorderPointer := httptest.NewRecorder()
 
@@ -61,10 +53,9 @@ func TestGetAllBookings(t *testing.T) {
 }
 
 func TestGetInfo(t *testing.T) {
-	router := initRouter()
+	router := produceRouterWithHandlers()
 	requestUrl := "/booking-app/info"
 	userRepository = mockUserRepositoryStruct{}
-	router.GET(requestUrl, getInfo)
 	requestPointer, _ := http.NewRequest(http.MethodGet, requestUrl, nil)
 	responseRecorderPointer := httptest.NewRecorder()
 
@@ -80,10 +71,9 @@ func TestGetInfo(t *testing.T) {
 }
 
 func TestAddBookingWithValidRequest(t *testing.T) {
-	router := initRouter()
+	router := produceRouterWithHandlers()
 	requestUrl := "/booking-app"
 	userRepository = mockUserRepositoryStruct{}
-	router.POST(requestUrl, addBooking)
 
 	user := helper.User{
 		FirstName:   "sz3",
@@ -110,10 +100,9 @@ func TestAddBookingWithValidRequest(t *testing.T) {
 }
 
 func TestAddBookingWithTooShortName(t *testing.T) {
-	router := initRouter()
+	router := produceRouterWithHandlers()
 	requestUrl := "/booking-app"
 	userRepository = mockUserRepositoryStruct{}
-	router.POST(requestUrl, addBooking)
 
 	user := helper.User{
 		FirstName:   "s",
