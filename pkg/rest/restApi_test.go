@@ -5,11 +5,13 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"sync"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 type mockUserRepositoryStruct struct{}
@@ -53,6 +55,7 @@ func TestGetAllBookings(t *testing.T) {
 }
 
 func TestGetInfo(t *testing.T) {
+	t.Log()
 	router := produceRouterWithHandlers()
 	requestUrl := "/booking-app/info"
 	userRepository = mockUserRepositoryStruct{}
@@ -71,6 +74,7 @@ func TestGetInfo(t *testing.T) {
 }
 
 func TestAddBookingWithValidRequest(t *testing.T) {
+	defer setRemainingTickets(helper.ConferenceTickets) // it will reset shared variable across all test to its initial value
 	router := produceRouterWithHandlers()
 	requestUrl := "/booking-app"
 	userRepository = mockUserRepositoryStruct{}
@@ -120,4 +124,40 @@ func TestAddBookingWithTooShortName(t *testing.T) {
 
 	assert.Equal(t, http.StatusBadRequest, responseRecorderPointer.Code)
 	assert.Contains(t, mappedResponse, "please provide valid first name, last name, email, and be sure that we have enough tickets left")
+}
+
+func TestAddBookingRemainingTicketAfterConcurrentUpdate(t *testing.T) {
+	defer setRemainingTickets(helper.ConferenceTickets) // it will reset shared variable across all test to its initial value
+	router := produceRouterWithHandlers()
+	requestUrl := "/booking-app"
+	userRepository = mockUserRepositoryStruct{}
+
+	var wg sync.WaitGroup
+	wg.Add(20)
+	for i := 0; i < 20; i++ {
+		go func() {
+			defer wg.Done()
+
+			user := helper.User{
+				FirstName:   "sz3",
+				LastName:    "Lambo",
+				Email:       "random@com",
+				UserTickets: 2,
+			}
+			requestBody, _ := json.Marshal(user)
+			requestPointer, _ := http.NewRequest(http.MethodPost, requestUrl, bytes.NewBuffer(requestBody))
+			responseRecorderPointer := httptest.NewRecorder()
+			router.ServeHTTP(responseRecorderPointer, requestPointer)
+
+			responseData, _ := io.ReadAll(responseRecorderPointer.Body)
+			var mappedResponse helper.User
+			json.Unmarshal(responseData, &mappedResponse)
+
+			assert.Equal(t, http.StatusCreated, responseRecorderPointer.Code)
+		}()
+	}
+
+	wg.Wait()
+
+	assert.Equal(t, getRemainingTickets(), uint32(10))
 }

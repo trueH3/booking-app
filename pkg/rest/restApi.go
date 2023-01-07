@@ -10,7 +10,7 @@ import (
 	"sync/atomic"
 )
 
-// this needs to be thread safe, do not use it directly
+// this needs to be thread safe, do not use it directly, use atomic operation
 var remainingTickets = helper.ConferenceTickets
 var userRepository helper.IUserRepository = helper.UserRepositoryStruct{}
 
